@@ -44,6 +44,16 @@ class CreateNewPost(graphene.Mutation):
 
 class PostMutations(graphene.ObjectType):
     create_new_post = CreateNewPost.Field()
+    
+#@subscirptions.decorator    
+class Subscription(graphene.ObjectType):
+    count = graphene.Int(upto=graphene.Int())
 
+    async def subscribe_count(root, info, upto=3):
+        for i in range(upto):
+            yield i
+            await asyncio.sleep(1)
 
-app.add_route("/graphql", GraphQLApp(schema=graphene.Schema(query=Query, mutation=PostMutations)))
+            
+
+app.add_route("/graphql", GraphQLApp(schema=graphene.Schema(query=Query, mutation=PostMutations, subscription=Subscription)))
